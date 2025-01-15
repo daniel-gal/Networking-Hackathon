@@ -46,9 +46,9 @@ class Server:
 
 
     def _division_of_labor(self):
-        threading.Thread(target= self._broadcast_offers, daemon=True).start()
-        threading.Thread(target= self._accept_tcp_connections, daemon= True).start()
-        threading.Thread(target=self._accept_udp_request, daemon=True).start()
+        threading.Thread(target= self._broadcast_offers).start()
+        threading.Thread(target= self._accept_tcp_connections).start()
+        threading.Thread(target=self._accept_udp_request).start()
 
         while self.running:
             time.sleep(1)
@@ -73,7 +73,7 @@ class Server:
         while self.running:
             client_socket, addr = self.tcp_socket.accept() # one thread handle the accept socket so there no will be stuck, this methos return (client ip, client port)
             print(f"[{self.server_name}] TCP connection from {addr}")
-            threading.Thread(target= self._handle_tcp_client, args= (client_socket,), deamon= True).start()##the thread to handle specific client
+            threading.Thread(target= self._handle_tcp_client, args= (client_socket,)).start()##the thread to handle specific client
 
 
 
@@ -110,7 +110,8 @@ class Server:
 
     def _accept_udp_request(self):
         data, addr = self.udp_socket.recvfrom(UDP_BUFFER_SIZE)
-        threading.Thread(target = self._handle_udp_client,args=(data, addr), daemon=True).start()
+        threading.Thread(target = self._handle_udp_client, args=(data, addr)
+                         ).start()
 
 
     def _handle_udp_client(self,data,addr):
